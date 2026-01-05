@@ -2,8 +2,7 @@ name: ZMK Build Lily58 Split
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 jobs:
@@ -17,31 +16,27 @@ jobs:
         split_role: [central, peripheral]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install west and ZMK
+      - name: Install ZMK
         run: |
           pip install --upgrade pip
           pip install zmk
 
-      - name: Initialize ZMK workspace
-        run: west init -l app
-      - name: Update ZMK modules
-        run: west update
+      - name: Initialize workspace
+        run: west init -l app && west update
 
-      - name: Build firmware
+      - name: Build UF2
         run: |
-          echo "Building ${{ matrix.board }} - ${{ matrix.shield }} (${ { matrix.split_role } })"
-          west build -b ${{ matrix.board }} -s app -d build/${{ matrix.shield }} \
-            -- -DSPLIT_ROLE=${{ matrix.split_role }}
+          echo "Building ${{ matrix.board }} - ${{ matrix.shield }} (role: ${{ matrix.split_role }})"
+          west build -b ${{ matrix.board }} -s app -d build/${{ matrix.shield }} -- -DSPLIT_ROLE=${{ matrix.split_role }}
 
-      - name: Upload UF2 artifacts
+      - name: Upload UF2
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.shield }}.uf2
