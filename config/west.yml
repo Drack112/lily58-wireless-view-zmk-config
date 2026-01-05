@@ -5,7 +5,8 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: v0.3
+      # Upgrade from v0.3 to at least v0.4 (or a newer tag, e.g. v0.5, v0.6, or `main`)
+      revision: v0.4 # <-- NEW
       import: app/west.yml
   self:
     path: config

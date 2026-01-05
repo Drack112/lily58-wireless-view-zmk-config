@@ -20,12 +20,12 @@ jobs:
                       conf: debug_right.conf # peripheral – no logging
 
         # --------------------------------------------------------
-        # Call the **reusable** ZMK workflow (now available in v0.4+)
+        # Call the **reusable** ZMK workflow (v0.4+)
         # --------------------------------------------------------
-        uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3 # <‑‑ note the v0.4 tag
+        uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.4 # <-- note v0.4 (or later)
         with:
-            board: ${{ matrix.board }} # now a valid input
-            shield: ${{ matrix.shield }} # now a valid input
+            board: ${{ matrix.board }} # now valid inputs
+            shield: ${{ matrix.shield }} # now valid inputs
             extra_cmake_args: "-DCONF_FILE=./config/${{ matrix.conf }}"
             artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
         secrets: inherit
