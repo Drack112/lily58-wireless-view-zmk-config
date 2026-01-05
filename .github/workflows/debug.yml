@@ -1,10 +1,6 @@
 name: ZMK Build – Lily58 split (left + right)
 
-# Run on pushes, PRs, or manual dispatch
-on:
-    push:
-    pull_request:
-    workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
     build:
