@@ -19,9 +19,7 @@
  * disable all the config options that rely on those forks and modules without having
  * to edit the entire keymap file manually every time.
  */
-define SPLIT_USB_DETECT
-define SPLIT_USB_TIMEOUT 2000
-define SPLIT_USB_TIMEOUT_POLL 10
+
 #define HAS_MOUSE_KEYS
 #define HAS_MOUSE_TP
 
