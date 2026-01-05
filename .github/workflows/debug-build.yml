@@ -1,34 +1,29 @@
 name: ZMK Build – Lily58 split (left + right)
 
-# Trigger on push, PR and manual dispatch
-on: [push, pull_request, workflow_dispatch]
+# Run on pushes, PRs, or manual dispatch
+on:
+    push:
+    pull_request:
+    workflow_dispatch:
 
 jobs:
-    # -----------------------------------------------------------------
-    # A matrix that builds BOTH sides.  The `conf` field points to the
-    # fragment we created in step 2.
-    # -----------------------------------------------------------------
     build:
         strategy:
             matrix:
                 include:
                     - board: nice_nano_v2
                       shield: lily58_left
-                      conf: debug_left.conf # central + logging
+                      conf: debug_left.conf # central + USB logging
                     - board: nice_nano_v2
                       shield: lily58_right
                       conf: debug_right.conf # peripheral – no logging
+
         uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
         with:
-            # The reusable workflow expects these *exact* input names:
-            board: ${{ matrix.board }}
-            shield: ${{ matrix.shield }}
-            # The config directory is already `config` by default – you can omit it:
+            board: ${{ matrix.board }} # <-- exactly the name the workflow expects
+            shield: ${{ matrix.shield }} # <-- exactly the name the workflow expects
+            # If you want to be explicit you can still set the config‑dir, but the default is already ./config
             # zmk-config-dir: config
-            # Pass the fragment file **after** the `--` separator.  The reusable
-            # workflow does:  west build … -- <extra‑cmake‑args>
-            # Therefore we give it just the `-DCONF_FILE=` part.
-            extra-cmake-args: "-DCONF_FILE=./config/${{ matrix.conf }}"
-            # Optional – give the artifact a nice readable name:
-            artifact-name: "lily58-${{ matrix.shield }}-nice_nano_v2"
-        secrets: inherit # forwards any needed repo‑secret (e.g. GH_TOKEN) to the reusable wf
+            extra_cmake_args: "-DCONF_FILE=./config/${{ matrix.conf }}"
+            artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
+        secrets: inherit
