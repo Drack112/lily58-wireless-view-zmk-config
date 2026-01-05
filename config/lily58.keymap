@@ -1,164 +1,81 @@
 /*
  * Copyright (c) 2020 The ZMK Contributors
+ *
  * SPDX-License-Identifier: MIT
  */
 
-#define BASE 0
-#define LOWER 1
-#define MOUSE_KEYS 2
-#define MOUSE_TP 3
-#define MOUSE_TP_SET 4
-
-/* -----------------------------------------------------------------
- * Optional feature toggles – you can leave them as‑is or adjust.
- * ----------------------------------------------------------------- */
-#define HAS_MOUSE_KEYS
-#define HAS_MOUSE_TP
-
-#include <dt-bindings/zmk/mouse.h>
-#include <behaviors/mouse_keys.dtsi>
-
-/* -------------------------------------------------------------
- *  Behaviors (hold‑tap, tap‑dance, etc.)
- * ------------------------------------------------------------- */
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/pointing.h>
 
-{
-    behaviors {
-        hm: homerow_mods {
-            compatible = "zmk,behavior-hold-tap";
-            label = "homerow_mods";
-            bindings = <&kp>, <&kp>;
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            flavor = "tap-preferred";
-        };
-
-        leftclick: leftclick {
-            compatible = "zmk,behavior-tap-dance";
-            label = "LEFTCLICK";
-            #binding-cells = <0>;
-            bindings = <&hm LC(SPACE) SPACE>, <&mkp LCLK>;
-        };
-
-        mouseclick_keypress: mouseclick_keypress {
-            compatible = "zmk,behavior-hold-tap";
-            label = "MOUSECLICK_KEYPRESS";
-            bindings = <&mkp>, <&kp>;
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            flavor = "tap-preferred";
-        };
-    };
-
+/ {
     keymap {
         compatible = "zmk,keymap";
 
-        /* -----------------------------------------------------------------
-         *  BASE LAYER – standard QWERTY layout (the row with Z X C V B
-         *  is now explicitly present, with correct Shift‑behaviour).
-         * ----------------------------------------------------------------- */
         default_layer {
-            /* -----------------------------------------------------------------
-            *  BASE LAYER – QWERTY (the row with Z X C V B is now fixed)
-            * ----------------------------------------------------------------- */
+            // ------------------------------------------------------------------------------------------------------------
+            // |  ESC  |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |   `   |
+            // |  TAB  |  Q  |  W  |  E   |  R   |  T   |                   |  Y   |  U    |  I    |  O   |   P   |   -   |
+            // |  CTRL |  A  |  S  |  D   |  F   |  G   |                   |  H   |  J    |  K    |  L   |   ;   |   '   |
+            // | SHIFT |  Z  |  X  |  C   |  V   |  B   |   "["  |  |  "]"  |  N   |  M    |  ,    |  .   |   /   | SHIFT |
+            //                     | ALT  | GUI  | LOWER|  SPACE |  | ENTER | RAISE| BSPC  | GUI   |
+
+            display-name = "lameiro0x";
             bindings = <
-                /* Row 0 – top (ESC…) */
-                &kp ESC      &kp N1   &kp N2   &kp N3   &kp N4   &kp N5   &kp N6   &kp N7   &kp N8   &kp N9   &kp N0   &kp BACKSPACE
-
-                /* Row 1 – Q‑row */
-                &kp TAB      &kp Q    &kp W    &kp E    &kp R    &kp T    &kp Y    &kp U    &kp I    &kp O    &kp P    &kp MINUS
-
-                /* Row 2 – A‑row */
-                &kp LCTRL    &kp A    &hm LEFT_ALT S   &hm LGUI D      &hm LSHFT F   &hm LCTRL G
-                &hm RCTRL H  &hm RSHFT J   &hm RGUI K   &hm RIGHT_ALT L   &kp SEMI   &kp ENTER
-
-                /* Row 3 – Z‑row (the problematic one) */
-                &kp LSHIFT   &kp Z    &kp X    &kp C    &kp V    &kp B
-                &hm LA(LC(W)) LBKT     &hm LC(LG(A)) RIGHT_BRACKET
-                &kp N        &kp M    &kp COMMA   &kp DOT   &kp SLASH   &kp RSHIFT
-
-                /* Bottom row – modifiers / layer‑tap keys */
-                &kp LCTRL    &kp LALT   &lt 1 TAB          /* LT‑1 : hold → LOWER layer, tap → TAB */
-                &hm LGUI ENTER                     /* your custom LGUI‑ENTER behaviour */
-                &hm LC(SPACE) SPACE                /* space with homerow‑mods */
-                &lt 2 BACKSPACE                    /* LT‑2 : hold → RAISE layer, tap → Backspace */
-                &lt 3 EQUAL                        /* LT‑3 : hold → ??? layer, tap → = */
-                &kp QUOTE
+&kp ESC    &kp N1  &kp N2  &kp N3    &kp N4    &kp N5                             &kp N6  &kp N7    &kp N8     &kp N9   &kp N0    &kp GRAVE
+&kp TAB    &kp Q   &kp W   &kp E     &kp R     &kp T                              &kp Y   &kp U     &kp I      &kp O    &kp P     &kp MINUS
+&kp LCTRL  &kp A   &kp S   &kp D     &kp F     &kp G                              &kp H   &kp J     &kp K      &kp L    &kp SEMI  &kp SQT
+&kp LSHFT  &kp Z   &kp X   &kp C     &kp V     &kp B   &trans       &kp CAPSLOCK  &kp N   &kp M     &kp COMMA  &kp DOT  &kp FSLH  &kp RSHFT
+                           &kp LALT  &kp LGUI  &mo 1   &kp SPACE    &kp RET       &mo 2   &kp BSPC  &kp RGUI
             >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
+        lower_layer {
+            // ------------------------------------------------------------------------------------------------------------
+            // | BTCLR | BT1 | BT2 |  BT3 |  BT4 |  BT5 |                   |      |       |       |      |       |       |
+            // |  F1   |  F2 |  F3 |  F4  |  F5  |  F6  |                   |  F7  |  F8   |  F9   |  F10 |  F11  |  F12  |
+            // |   `   |  !  |  @  |  #   |  $   |  %   |                   |  ^   |  &    |  *    |  (   |   )   |   ~   |
+            // |       |     |     |      |      |      |        |  |       |      |  _    |  +    |  {   |   }   |  "|"  |
+            //                     |      |      |      |        |  |       |      |       |       |
 
-        /* -----------------------------------------------------------------
-         *  LOWER LAYER – activated with the `LT(1, …)` key in the bottom row
-         * ----------------------------------------------------------------- */
-        lower {
+            display-name = "Lower";
             bindings = <
-                /* Top row – function keys + navigation */
-                &kp F1   &kp F2   &kp F3   &kp F4   &kp F5   &kp F6
-                &kp F7   &kp F8   &kp F9   &kp F10  &kp F11  &kp F12
-
-                /* Second row – symbols */
-                &kp LS(EXCL)   &kp LS(AT)   &kp LS(POUND)   &kp LS(DOLLAR)  &kp LS(PERCENT)  &kp LS(CARET)
-                &kp LS(AMP)    &kp LS(STAR) &kp LS(LPAREN)  &kp LS(RPAREN)  &kp LS(MINUS)    &kp LS(UNDERSCORE)
-
-                /* Third row – numbers / shortcuts */
-                &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp N6
-                &kp N7 &kp N8 &kp N9 &kp N0 &kp LS(EQUAL) &kp LS(PLUS)
-
-                /* Fourth row – navigation / editing */
-                &kp LEFT &kp DOWN &kp UP &kp RIGHT
-                &kp HOME &kp END &kp PGUP &kp PGDN
-                &kp DEL &kp BSPC &kp ENTER
-
-                /* Bottom row – layer keys */
-                &kp ESC   &kp TAB   &kp SPACE   &kp ENTER   &kp BSPACE   &kp ESC
+&bt BT_CLR  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4                    &trans            &trans             &trans           &trans    &trans    &kp EQUAL
+&kp F1      &kp F2        &kp F3        &kp F4        &kp F5        &kp F6                          &kp F7            &kp F8             &kp F9           &kp F10   &kp F11   &kp F12
+&kp GRAVE   &kp EXCL      &kp AT        &kp HASH      &kp DOLLAR    &kp PRCNT                       &kp CARET         &kp AMPS           &kp KP_MULTIPLY  &kp LPAR  &kp RPAR  &kp TILDE
+&trans      &trans        &trans        &trans        &trans        &trans        &trans    &trans  &kp LEFT_BRACKET  &kp RIGHT_BRACKET  &kp KP_PLUS      &kp LBRC  &kp RBRC  &kp PIPE
+                                        &trans        &trans        &trans        &trans    &trans  &trans            &kp DELETE         &trans
             >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-        /* -----------------------------------------------------------------
-         *  SYMBOL LAYER – accessed with a dedicated layer key if you want one.
-         *  (You can delete the whole section if you never use it.)
-         * ----------------------------------------------------------------- */
-        symbol {
+        raise_layer {
+            // ------------------------------------------------------------------------------------------------------------
+            // |       |     |     |      |      |      |                   |      |       |       |      |       |       |
+            // |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
+            // |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   v   |  ^   |  ->   |       |
+            // |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
+            //                     |      |      |      |        |  |       |      |       |       |
+
+            display-name = "Raise";
             bindings = <
-                &kp GRAVE   &kp LS(TILDE)   &kp MINUS   &kp LS(UNDERSCORE)   &kp LS(EQUAL)   &kp LS(PLUS)
-                &kp LS(LBRACKET)   &kp LS(RBRACKET)   &kp LS(BACKSLASH)   &kp LS(PIPE)   &kp LS(QUOTE)   &kp LS(DQT)
-
-                &kp LS(1)   &kp LS(2)   &kp LS(3)   &kp LS(4)   &kp LS(5)   &kp LS(6)
-                &kp LS(7)   &kp LS(8)   &kp LS(9)   &kp LS(0)   &kp LS(LT)   &kp LS(GT)
-
-                &kp LS(SEMICOLON)   &kp LS(COLON)   &kp LS(COMMA)   &kp LS(DOT)
-                &kp LS(SLASH)   &kp LS(QUESTION)
-
-                &kp ESC   &kp TAB   &kp ENTER   &kp BSPACE   &kp SPACE   &kp ESC
+&trans     &trans  &trans  &trans   &trans   &trans                     &trans       &trans     &trans     &trans    &trans     &trans
+&kp GRAVE  &kp N1  &kp N2  &kp N3   &kp N4   &kp N5                     &kp N6       &kp N7     &kp N8     &kp N9    &kp N0     &trans
+&kp F1     &kp F2  &kp F3  &kp F4   &kp F5   &kp F6                     &trans       &kp LEFT   &kp DOWN   &kp UP    &kp RIGHT  &trans
+&kp F7     &kp F8  &kp F9  &kp F10  &kp F11  &kp F12  &trans    &trans  &kp KP_PLUS  &kp MINUS  &kp EQUAL  &kp LBKT  &kp RBKT   &kp BSLH
+                           &trans   &trans   &trans   &trans    &trans  &trans       &trans     &trans
             >;
+
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-        /* -----------------------------------------------------------------
-         *  NAVIGATION LAYER – optional, activated with a dedicated key.
-         * ----------------------------------------------------------------- */
-        navi {
-            bindings = <
-                &kp HOME   &kp END   &kp PAGE_UP   &kp PAGE_DOWN
-                &kp LEFT   &kp DOWN   &kp UP   &kp RIGHT
-                &kp INSERT   &kp DELETE   &kp BSPACE   &kp ENTER
-                &kp ESC   &kp TAB   &kp SPACE   &kp ENTER   &kp BSPACE   &kp ESC
-            >;
-        };
+        extra_1 { status = "reserved"; };
 
-        /* -----------------------------------------------------------------
-         *  MOUSE LAYER – you already have mouse‑pointing enabled.
-         * ----------------------------------------------------------------- */
-        mouse_3 {
-            bindings = <
-                &kp LCTRL   &kp LALT   &kp LGUI   &kp LEFT   &kp RIGHT   &kp UP
-                &kp DOWN   &kp BTN_LEFT   &kp BTN_RIGHT   &kp BTN_MIDDLE   &kp BTN_BACK   &kp BTN_FORWARD
-                &kp MOUSE_MOVE_X  &kp MOUSE_MOVE_Y  &kp MOUSE_SCROLL_X  &kp MOUSE_SCROLL_Y
-            >;
-        };
+        extra_2 { status = "reserved"; };
+
+        extra_3 { status = "reserved"; };
     };
 };
