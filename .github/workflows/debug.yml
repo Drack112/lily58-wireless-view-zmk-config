@@ -22,7 +22,7 @@ jobs:
         # --------------------------------------------------------
         # Call the **reusable** ZMK workflow (now available in v0.4+)
         # --------------------------------------------------------
-        uses: zmkfirmware/zmk/.github/workflows/build.yml@v0.4 # <‑‑ note the v0.4 tag
+        uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3 # <‑‑ note the v0.4 tag
         with:
             board: ${{ matrix.board }} # now a valid input
             shield: ${{ matrix.shield }} # now a valid input
