@@ -1,50 +1,20 @@
-name: ZMK Build Lily58 Split
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        board: [nice_nano_v2, nice_nano_v2]
-        shield: [lily58_left, lily58_right]
-        split_role: [central, peripheral]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install ZMK
-        run: |
-          pip install --upgrade pip
-          pip install zmk
-
-      - name: Initialize ZMK workspace
-        run: |
-          west init -l app
-          west update
-
-      - name: Build firmware
-        run: |
-          echo "Building ${{ matrix.board }} - ${{ matrix.shield }} (role: ${{ matrix.split_role }})"
-          west build -b ${{ matrix.board }} -s app -d build/${{ matrix.shield }} -- -DSPLIT_ROLE=${{ matrix.split_role }}
-
-      - name: Rename UF2
-        run: |
-          cp build/${{ matrix.shield }}/zephyr/zephyr.uf2 build/${{ matrix.shield }}/${{ matrix.shield }}.uf2
-
-      - name: Upload UF2
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.shield }}.uf2
-          path: build/${{ matrix.shield }}/${{ matrix.shield }}.uf2
+# This file generates the GitHub Actions matrix
+# For simple board + shield combinations, add them
+# to the top level board and shield arrays, for more
+# control, add individual board + shield combinations to
+# the `include` property, e.g:
+#
+# board: [ "nice_nano_v2" ]
+# shield: [ "corne_left", "corne_right" ]
+# include:
+#   - board: bdn9_rev2
+#   - board: nice_nano_v2
+#     shield: reviung41
+#
+---
+include:
+  - board: nice_nano_v2
+    shield: lily58_left nice_view_adapter nice_view
+    snippet: studio-rpc-usb-uart
+  - board: nice_nano_v2
+    shield: lily58_right nice_view_adapter nice_view
