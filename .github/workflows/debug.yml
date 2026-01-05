@@ -1,46 +1,8 @@
-# .github/workflows/zmk-build.yml
-name: ZMK Build – Lily58 split (left + right)
-
-# ------------------------------------------------------------
-# Trigger on every push to the default branch, on PRs, or
-# when you click “Run workflow” in the UI.
-# ------------------------------------------------------------
-on:
-    push:
-        branches: ["**"] # runs on any branch (remove if you only want default)
-    pull_request:
-    workflow_dispatch: # enables the manual “Run workflow” button
-
-jobs:
-    build:
-        # --------------------------------------------------------
-        # Create two matrix entries – one for each shield half.
-        # --------------------------------------------------------
-        strategy:
-            matrix:
-                include:
-                    - board: nice_nano_v2
-                      shield: lily58_left
-                      conf: debug_left.conf # central + USB logging
-                    - board: nice_nano_v2
-                      shield: lily58_right
-                      conf: debug_right.conf # peripheral – no logging
-
-        # --------------------------------------------------------
-        # Call the ZMK reusable workflow that does the heavy lifting.
-        # --------------------------------------------------------
-        uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
-
-        # --------------------------------------------------------
-        # Pass the parameters that the upstream workflow expects.
-        # --------------------------------------------------------
-        with:
-            board: ${{ matrix.board }} # <-- exact input name
-            shield: ${{ matrix.shield }} # <-- exact input name
-            # The upstream workflow already defaults `zmk-config-dir` to ./config,
-            # so we can omit it unless you keep the config somewhere else.
-            extra_cmake_args: "-DCONF_FILE=./config/${{ matrix.conf }}"
-            artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
-
-        # Forward any needed repo‑secrets (e.g. GH_TOKEN) to the called workflow.
-        secrets: inherit
+uses: zmkfirmware/zmk/.github/workflows/build.yml@v0.3
+with:
+    extra_cmake_args: >-
+        -DBOARD=${{ matrix.board }}
+        -DSHIELD=${{ matrix.shield }}
+        -DZMK_CONFIG=./config
+        -DCONF_FILE=./config/${{ matrix.conf }}
+    artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
