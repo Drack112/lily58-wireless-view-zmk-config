@@ -12,13 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        board-shield:
-          - board: nice_nano_v2
-            shield: lily58_left
-            split_role: central
-          - board: nice_nano_v2
-            shield: lily58_right
-            split_role: peripheral
+        board: [nice_nano_v2, nice_nano_v2]
+        shield: [lily58_left, lily58_right]
+        split_role: [central, peripheral]
 
     steps:
       - name: Checkout repository
@@ -29,7 +25,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install west
+      - name: Install west and ZMK
         run: |
           pip install --upgrade pip
           pip install zmk
@@ -41,12 +37,12 @@ jobs:
 
       - name: Build firmware
         run: |
-          echo "Building ${{ matrix.board-shield.board }} - ${{ matrix.board-shield.shield }} (${ { matrix.board-shield.split_role } })"
-          west build -b ${{ matrix.board-shield.board }} -s app -d build/${{ matrix.board-shield.shield }} \
-            -- -DSPLIT_ROLE=${{ matrix.board-shield.split_role }}
+          echo "Building ${{ matrix.board }} - ${{ matrix.shield }} (${ { matrix.split_role } })"
+          west build -b ${{ matrix.board }} -s app -d build/${{ matrix.shield }} \
+            -- -DSPLIT_ROLE=${{ matrix.split_role }}
 
       - name: Upload UF2 artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.board-shield.shield }}.uf2
-          path: build/${{ matrix.board-shield.shield }}/zephyr/zephyr.uf2
+          name: ${{ matrix.shield }}.uf2
+          path: build/${{ matrix.shield }}/zephyr/zephyr.uf2
