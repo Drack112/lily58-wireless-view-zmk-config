@@ -1,8 +1,39 @@
-uses: zmkfirmware/zmk/.github/workflows/build.yml@v0.3
-with:
-    extra_cmake_args: >-
-        -DBOARD=${{ matrix.board }}
-        -DSHIELD=${{ matrix.shield }}
-        -DZMK_CONFIG=./config
-        -DCONF_FILE=./config/${{ matrix.conf }}
-    artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
+# .github/workflows/zmk-build.yml
+name: ZMK Build – Lily58 split (left + right)
+
+on:
+    push:
+        branches: ["**"] # run on any branch (remove if you want only default)
+    pull_request:
+    workflow_dispatch: # enable the “Run workflow” button
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                include:
+                    - board: nice_nano_v2
+                      shield: lily58_left
+                      conf: debug_left.conf # central + USB logging
+                    - board: nice_nano_v2
+                      shield: lily58_right
+                      conf: debug_right.conf # peripheral – no logging
+
+        # --------------------------------------------------------
+        # Call the **generic** ZMK reusable workflow (v0.3)
+        # --------------------------------------------------------
+        uses: zmkfirmware/zmk/.github/workflows/build.yml@v0.3
+
+        with:
+            # The generic workflow only knows two inputs:
+            #   * extra_cmake_args
+            #   * artifact_name
+            # Pass BOARD, SHIELD, and the custom CONF file as normal CMake args:
+            extra_cmake_args: >-
+                -DBOARD=${{ matrix.board }}
+                -DSHIELD=${{ matrix.shield }}
+                -DZMK_CONFIG=./config
+                -DCONF_FILE=./config/${{ matrix.conf }}
+            artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
+
+        secrets: inherit
