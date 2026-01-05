@@ -16,7 +16,8 @@ jobs:
         split_role: [central, peripheral]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -28,16 +29,22 @@ jobs:
           pip install --upgrade pip
           pip install zmk
 
-      - name: Initialize workspace
-        run: west init -l app && west update
+      - name: Initialize ZMK workspace
+        run: |
+          west init -l app
+          west update
 
-      - name: Build UF2
+      - name: Build firmware
         run: |
           echo "Building ${{ matrix.board }} - ${{ matrix.shield }} (role: ${{ matrix.split_role }})"
           west build -b ${{ matrix.board }} -s app -d build/${{ matrix.shield }} -- -DSPLIT_ROLE=${{ matrix.split_role }}
+
+      - name: Rename UF2
+        run: |
+          cp build/${{ matrix.shield }}/zephyr/zephyr.uf2 build/${{ matrix.shield }}/${{ matrix.shield }}.uf2
 
       - name: Upload UF2
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.shield }}.uf2
-          path: build/${{ matrix.shield }}/zephyr/zephyr.uf2
+          path: build/${{ matrix.shield }}/${{ matrix.shield }}.uf2
