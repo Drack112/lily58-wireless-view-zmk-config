@@ -62,28 +62,35 @@
          *  is now explicitly present, with correct Shift‑behaviour).
          * ----------------------------------------------------------------- */
         default_layer {
+            /* -----------------------------------------------------------------
+            *  BASE LAYER – QWERTY (the row with Z X C V B is now fixed)
+            * ----------------------------------------------------------------- */
             bindings = <
-                /* Row 0 – topmost (ESC row) */
-                &kp ESC   &kp N1    &kp N2    &kp N3    &kp N4    &kp N5    &kp N6    &kp N7    &kp N8    &kp N9    &kp N0    &kp GRAVE
+                /* Row 0 – top (ESC…) */
+                &kp ESC      &kp N1   &kp N2   &kp N3   &kp N4   &kp N5   &kp N6   &kp N7   &kp N8   &kp N9   &kp N0   &kp BACKSPACE
 
                 /* Row 1 – Q‑row */
-                &kp TAB   &kp Q      &kp W      &kp E      &kp R      &kp T      &kp Y      &kp U      &kp I      &kp O      &kp P      &kp MINUS
+                &kp TAB      &kp Q    &kp W    &kp E    &kp R    &kp T    &kp Y    &kp U    &kp I    &kp O    &kp P    &kp MINUS
 
                 /* Row 2 – A‑row */
-                &kp LCTRL &kp A      &kp S      &kp D      &kp F      &kp G      &kp H      &kp J      &kp K      &kp L      &kp SEMI   &kp QUOT
+                &kp LCTRL    &kp A    &hm LEFT_ALT S   &hm LGUI D      &hm LSHFT F   &hm LCTRL G
+                &hm RCTRL H  &hm RSHFT J   &hm RGUI K   &hm RIGHT_ALT L   &kp SEMI   &kp ENTER
 
-                /* Row 3 – Z‑row (the one that previously didn’t work) */
-                &kp LSHIFT &kp Z      &kp X      &kp C      &kp V      &kp B
-                &kp LEFTBRACKET &kp RIGHTBRACKET        /* you had custom behaviours here – keep them if you need them */
-                &kp N            &kp M      &kp COMMA   &kp DOT   &kp SLASH   &kp RSHIFT
+                /* Row 3 – Z‑row (the problematic one) */
+                &kp LSHIFT   &kp Z    &kp X    &kp C    &kp V    &kp B
+                &hm LA(LC(W)) LBKT     &hm LC(LG(A)) RIGHT_BRACKET
+                &kp N        &kp M    &kp COMMA   &kp DOT   &kp SLASH   &kp RSHIFT
 
-                /* Bottom row – modifiers / layer keys */
-                &kp LCTRL   &kp LALT   &lt 1 TAB          /* LT‑1 = MOMENTARY LOWER layer */
-                &hm LGUI ENTER                       /* LGUI + ENTER – you can replace with whatever you like */
-                &hm LC(SPACE) SPACE                   /* Space with homerow‑mods */
-                &lt 2 BACKSPACE   &lt 3 EQUAL       &kp QUOTE
+                /* Bottom row – modifiers / layer‑tap keys */
+                &kp LCTRL    &kp LALT   &lt 1 TAB          /* LT‑1 : hold → LOWER layer, tap → TAB */
+                &hm LGUI ENTER                     /* your custom LGUI‑ENTER behaviour */
+                &hm LC(SPACE) SPACE                /* space with homerow‑mods */
+                &lt 2 BACKSPACE                    /* LT‑2 : hold → RAISE layer, tap → Backspace */
+                &lt 3 EQUAL                        /* LT‑3 : hold → ??? layer, tap → = */
+                &kp QUOTE
             >;
         };
+
 
         /* -----------------------------------------------------------------
          *  LOWER LAYER – activated with the `LT(1, …)` key in the bottom row
