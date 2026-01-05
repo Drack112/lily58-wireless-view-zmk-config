@@ -1,0 +1,29 @@
+name: ZMK Build – Lily58 split (left + right)
+
+# Run on pushes, PRs, or manual dispatch
+on:
+    push:
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                include:
+                    - board: nice_nano_v2
+                      shield: lily58_left
+                      conf: debug_left.conf # central + USB logging
+                    - board: nice_nano_v2
+                      shield: lily58_right
+                      conf: debug_right.conf # peripheral – no logging
+
+        uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+        with:
+            board: ${{ matrix.board }} # <-- exactly the name the workflow expects
+            shield: ${{ matrix.shield }} # <-- exactly the name the workflow expects
+            # If you want to be explicit you can still set the config‑dir, but the default is already ./config
+            # zmk-config-dir: config
+            extra_cmake_args: "-DCONF_FILE=./config/${{ matrix.conf }}"
+            artifact_name: "lily58-${{ matrix.shield }}-nice_nano_v2"
+        secrets: inherit
